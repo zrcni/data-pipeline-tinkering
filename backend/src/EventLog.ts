@@ -26,7 +26,6 @@ export class EventLog {
   async get() {
     try {
       const lines = await this.readLines(this.filePath)
-      console.log(lines)
       return lines
     } catch (err) {
       console.error("EventLog.get", err)
@@ -56,7 +55,7 @@ export class EventLog {
 
     let lines = []
     for await (const line of rl) {
-      lines.push(JSON.parse(line))
+      lines.unshift(JSON.parse(line))
     }
 
     return lines

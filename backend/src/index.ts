@@ -29,9 +29,12 @@ app.get("/", (req, res) => {
   res.status(200).send("OK")
 })
 
+// ?limit=<number>
 app.get("/events", async (req, res) => {
+  const limit = req.query.limit
   const lines = await eventLog.getAll()
-  res.status(200).json(lines)
+  const finalLines = limit ? lines.slice(0, Number(limit)) : lines
+  res.status(200).json(finalLines)
 })
 
 sio.on("connection", socket => {

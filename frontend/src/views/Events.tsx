@@ -17,15 +17,22 @@ const FILTERS = {
 
 function filterBy(filter: string) {
   return (event: Event) => {
+    const rNavigate = new RegExp('.*:.*:.*:click').test(event.name) && !!event.data.navigateTo
+    const rFormAbort = new RegExp('.*:.*:form:abort').test(event.name)
+    const rFormSubmit = new RegExp('.*:.*:form:submit').test(event.name)
+
     switch (filter) {
-      case FILTERS.BUTTON_CLICK:
-        return new RegExp('.*:.*:button:click').test(event.name)
       case FILTERS.FORM_SUBMIT:
-        return new RegExp('.*:.*:form:submit').test(event.name)
+        return rFormSubmit
       case FILTERS.FORM_ABORT:
-        return new RegExp('.*:.*:form:abort').test(event.name)
+        return rFormAbort
       case FILTERS.NAVIGATE:
-        return new RegExp('.*:.*:.*:click').test(event.name) && !!event.data.navigateTo
+        return rNavigate
+      case FILTERS.BUTTON_CLICK:
+        return !rNavigate
+          && !rFormAbort
+          && !rFormSubmit
+          && new RegExp('.*:.*:button:click').test(event.name)
       default:
         return true
     }
@@ -45,11 +52,13 @@ const Events = (props: Props) => {
       .catch(err => console.error(err))
   }, [])
 
+  const filteredEvents = events.filter(filterBy(filter))
+
   return (
     <Fragment>
-      <div>
-        <h4>Filter</h4>
-        <select onChange={e => setFilter(e.target.value)}>
+      <div style={{ marginBottom: 10 }}>
+        <label htmlFor="select-filter">Filter </label>
+        <select name="select-filter" onChange={e => setFilter(e.target.value)}>
           <option value="">None</option>
           <option value={FILTERS.BUTTON_CLICK}>Button click</option>
           <option value={FILTERS.FORM_SUBMIT}>Form submit</option>
@@ -57,6 +66,7 @@ const Events = (props: Props) => {
           <option value={FILTERS.NAVIGATE}>Navigation</option>
         </select>
       </div>
+      <p>Count: {filteredEvents.length}</p>
       <table style={{ width: "100%", fontSize: '18px' }}>
         <thead>
           <tr>
@@ -68,8 +78,7 @@ const Events = (props: Props) => {
           </tr>
         </thead>
         <tbody>
-          {events
-            .filter(filterBy(filter))
+          {filteredEvents
             .sort((a, b) => new Date(a.data.timestamp) > new Date(b.data.timestamp) ? -1 : 0)
             .map(event => (
               <tr key={event.name + event.data.timestamp}>
