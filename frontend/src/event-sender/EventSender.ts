@@ -1,3 +1,4 @@
+// EventSender formats events and sends them to the server
 export class EventSender {
   private userId: string
   private client: EventSenderClient

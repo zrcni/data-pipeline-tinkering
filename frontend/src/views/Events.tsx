@@ -15,36 +15,12 @@ const FILTERS = {
   NAVIGATE: 'NAVIGATE'
 }
 
-function filterBy(filter: string) {
-  return (event: Event) => {
-    const rNavigate = new RegExp('.*:.*:.*:click').test(event.name) && !!event.data.navigateTo
-    const rFormAbort = new RegExp('.*:.*:form:abort').test(event.name)
-    const rFormSubmit = new RegExp('.*:.*:form:submit').test(event.name)
-
-    switch (filter) {
-      case FILTERS.FORM_SUBMIT:
-        return rFormSubmit
-      case FILTERS.FORM_ABORT:
-        return rFormAbort
-      case FILTERS.NAVIGATE:
-        return rNavigate
-      case FILTERS.BUTTON_CLICK:
-        return !rNavigate
-          && !rFormAbort
-          && !rFormSubmit
-          && new RegExp('.*:.*:button:click').test(event.name)
-      default:
-        return true
-    }
-  }
-}
-
 const Events = (props: Props) => {
   const [events, setEvents] = useState<Event[]>([])
   const [filter, setFilter] = useState('')
 
   useEffect(() => {
-    fetch('http://localhost:4000/events', { method: 'GET' })
+    fetch('http://localhost:8080/api/events?limit=50', { method: 'GET' })
       .then(response => response.json())
       .then((events: Event[]) => {
         setEvents(events)
@@ -93,6 +69,30 @@ const Events = (props: Props) => {
       </table >
     </Fragment>
   )
+}
+
+function filterBy(filter: string) {
+  return (event: Event) => {
+    const rNavigate = new RegExp('.*:.*:.*:click').test(event.name) && !!event.data.navigateTo
+    const rFormAbort = new RegExp('.*:.*:form:abort').test(event.name)
+    const rFormSubmit = new RegExp('.*:.*:form:submit').test(event.name)
+
+    switch (filter) {
+      case FILTERS.FORM_SUBMIT:
+        return rFormSubmit
+      case FILTERS.FORM_ABORT:
+        return rFormAbort
+      case FILTERS.NAVIGATE:
+        return rNavigate
+      case FILTERS.BUTTON_CLICK:
+        return !rNavigate
+          && !rFormAbort
+          && !rFormSubmit
+          && new RegExp('.*:.*:button:click').test(event.name)
+      default:
+        return true
+    }
+  }
 }
 
 function getEventType(event: Event) {

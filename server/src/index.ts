@@ -6,7 +6,7 @@ import path from "path"
 import cors from "cors"
 import bodyParser from "body-parser"
 
-const eventLogPath = path.resolve(process.cwd(), "..", "data")
+const eventLogPath = path.resolve(process.cwd(), "data")
 const eventLog = new EventLog(eventLogPath)
 
 const app = express()
@@ -25,12 +25,8 @@ server.on("listening", () => {
   console.log(`Express and socket.io listening on port ${PORT}`)
 })
 
-app.get("/", (req, res) => {
-  res.status(200).send("OK")
-})
-
 // ?limit=<number>
-app.get("/events", async (req, res) => {
+app.get("/api/events", async (req, res) => {
   const limit = req.query.limit
   const lines = await eventLog.getAll()
   const finalLines = limit ? lines.slice(0, Number(limit)) : lines
@@ -45,6 +41,17 @@ function addListeners(socket: Socket) {
   socket.on("user-event", event => {
     console.log("Name:", event.name)
     console.log("Data:", event.data)
-    eventLog.add(event)
+    eventLog.add(enrichEvent(event, socket))
   })
+}
+
+function enrichEvent(event, socket: Socket) {
+  const ip = socket.handshake["x-real-ip"] || socket.handshake.headers["x-forwarded-for"]
+  return {
+    name: event.name,
+    data: {
+      ...event.data,
+      ip
+    }
+  }
 }
