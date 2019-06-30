@@ -20,21 +20,7 @@ I tried to get stream processing to work with Google PubSub using the Go Beam SD
 - aggregate into stats
 - save to database
 
-```
-Frontend
-  |
-  | websockets
-  |
-Server
-  |
-  | temporary store or queue (batch=store, stream=queue)
-  |
-Beam
-  |
-  |
-  |
-Database
-```
+![dataflow](data-pipeline.png)
 
 ### Google Pub/Sub + Dataflow + BigQuery would probably be a great option that's easy to manage
 ![dataflow](diagram-dataflow.png)
