@@ -19,11 +19,7 @@ func main() {
 
 	for {
 		go func() {
-			errChan := make(chan error, 1)
-
-			go runLogFilePipeline(errChan)
-
-			err := <-errChan
+			err := runLogFilePipeline()
 			if err != nil {
 				fmt.Println("runLogFilePipeline", err)
 			}

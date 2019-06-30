@@ -20,18 +20,16 @@ import (
 
 var previousFile = InitPreviousFile()
 
-func runLogFilePipeline(c chan<- error) {
+func runLogFilePipeline() error {
 	ctx := context.Background()
 
 	data, err := readLatestEvents()
 	if err != nil {
-		c <- err
-		return
+		return err
 	}
 
 	if len(data) == 0 {
-		fmt.Println("No events found. Skipping pipeline.")
-		return
+		return fmt.Errorf("No events found. Skipping pipeline.")
 	}
 
 	log.Info(ctx, "Running")
@@ -66,7 +64,7 @@ func runLogFilePipeline(c chan<- error) {
 	if err := beamx.Run(ctx, p); err != nil {
 		log.Exitf(ctx, "Failed to execute job: %v", err)
 	}
-	c <- nil
+	return nil
 }
 
 func printEventByViewFn(view string) func(ctx context.Context, event Event) {
