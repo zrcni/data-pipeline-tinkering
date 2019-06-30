@@ -9,3 +9,22 @@ Basically:
 3. Receive event on the server and enrich it with request/socket specific data (ip address at the very least)
 4. Forward event to the next step in the data pipeline if there's one
     - for now, just saving it to a file
+
+
+## thoughts and prayers
+
+- socket event listener sends data to pubsub
+- consume the events with Beam
+- aggregate into stats
+- save to database (influx?)
+
+key-value
+- userid
+    - form submit
+        - element id
+        - element data-testid
+        - count
+    - navigation
+        - from
+        - to
+        - count
