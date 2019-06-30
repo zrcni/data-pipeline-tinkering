@@ -23,6 +23,5 @@ I tried to get stream processing to work with Google PubSub using the Go Beam SD
 ![dataflow](data-pipeline.png)
 
 ### Google Pub/Sub + Dataflow + BigQuery would probably be a great option that's easy to manage
-![dataflow](diagram-dataflow.png)
 
 # TODO: save processed data LOL
