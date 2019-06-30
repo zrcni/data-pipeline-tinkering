@@ -1,12 +1,11 @@
 import express from "express"
 import { Server as HTTPServer } from "http"
 import SocketIOServer, { Socket } from "socket.io"
-import { EventLog } from "./EventLog"
-import path from "path"
+import { EventLog } from "./lib/EventLog"
 import cors from "cors"
 import bodyParser from "body-parser"
 
-const eventLogPath = path.resolve(process.cwd(), "data")
+const eventLogPath = "/data"
 const eventLog = new EventLog(eventLogPath)
 
 const app = express()
@@ -28,7 +27,7 @@ server.on("listening", () => {
 // ?limit=<number>
 app.get("/api/events", async (req, res) => {
   const limit = req.query.limit
-  const lines = await eventLog.getAll()
+  const lines = await eventLog.get()
   const finalLines = limit ? lines.slice(0, Number(limit)) : lines
   res.status(200).json(finalLines)
 })
@@ -39,14 +38,17 @@ sio.on("connection", socket => {
 
 function addListeners(socket: Socket) {
   socket.on("user-event", event => {
-    console.log("Name:", event.name)
-    console.log("Data:", event.data)
-    eventLog.add(enrichEvent(event, socket))
+    const enrichedEvent = enrichEvent(event, socket)
+    console.log("Name:", enrichedEvent.name)
+    console.log("Data:", enrichedEvent.data)
+
+    eventLog.add(event)
   })
 }
 
 function enrichEvent(event, socket: Socket) {
-  const ip = socket.handshake["x-real-ip"] || socket.handshake.headers["x-forwarded-for"]
+  const ip =
+    socket.handshake["x-real-ip"] || socket.handshake.headers["x-forwarded-for"]
   return {
     name: event.name,
     data: {

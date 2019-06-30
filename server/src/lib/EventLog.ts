@@ -3,7 +3,7 @@ import os from "os"
 import path from "path"
 import readline from "readline"
 
-const sessionTimestamp = new Date().toISOString()
+// const sessionTimestamp = new Date().toISOString()
 
 export class EventLog {
   dirPath: string
@@ -62,6 +62,7 @@ export class EventLog {
   }
 
   private get filePath() {
-    return path.join(this.dirPath, `user-events-${sessionTimestamp}.log`)
+    return path.join(this.dirPath, `user-events.log`)
+    // return path.join(this.dirPath, `user-events-${sessionTimestamp}.log`)
   }
 }
