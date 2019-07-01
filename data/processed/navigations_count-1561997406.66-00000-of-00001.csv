@@ -1,0 +1,7 @@
+from,to,count
+contact,home,10
+events,contact,4
+home,events,4
+contact,events,1
+home,contact,7
+events,home,1

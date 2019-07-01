@@ -1,7 +1,0 @@
-from:to,count
-contact:home,6
-events:contact,3
-home:events,3
-contact:events,1
-home:contact,4
-events:home,1

@@ -27,6 +27,11 @@ def format_counts_csv(element):
   (name, ones) = element
   return "%s,%s" % (name, ones)
 
+def format_navigation_counts_csv(element):
+  (navigation, count) = element
+  navigateFrom, navigateTo = navigation.split(':')
+  return "%s,%s,%s" % (navigateFrom, navigateTo, count)
+
 def run(argv=None):
   """Main entry point; defines and runs the pipeline."""
   parser = argparse.ArgumentParser()
@@ -83,8 +88,8 @@ def run(argv=None):
     | "pair_navigations" >> beam.Map(pair_navigation)
     | 'group_navigations' >> beam.GroupByKey()
     | 'count_navigations' >> beam.Map(count_ones)
-    | 'format_navigations_count' >> beam.Map(format_counts_csv)
-    | 'write_navigations_count' >> WriteToText("%s/navigations_count-%s" % (known_args.output, time.time()), file_name_suffix='.csv', header='from:to,count')
+    | 'format_navigations_count' >> beam.Map(format_navigation_counts_csv)
+    | 'write_navigations_count' >> WriteToText("%s/navigations_count-%s" % (known_args.output, time.time()), file_name_suffix='.csv', header='from,to,count')
   )
 
   result = p.run()

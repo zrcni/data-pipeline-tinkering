@@ -1,0 +1,6 @@
+event_name,count
+frontend:events:button:click,7
+frontend:contact:button:click,16
+frontend:contact:form:abort,3
+frontend:home:button:click,21
+frontend:contact:form:submit,4
