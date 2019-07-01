@@ -13,9 +13,21 @@ from apache_beam.io import WriteToText
 from apache_beam.options.pipeline_options import PipelineOptions
 from apache_beam.options.pipeline_options import SetupOptions
 
-def get_data_path():
+def get_data_path(path=''):
   dirname = os.path.realpath('..')
-  return "%s/data" % dirname
+  return "%s/data%s" % (dirname, path)
+
+# removes shard indentifier (WriteToText function) from filename
+def clean_output_file_names():
+  path = get_data_path('/processed')
+  for r, d, f in os.walk(path):
+    for filename in f:
+      print filename
+      cleaned = filename.replace('00000-of-00001', '')
+      if cleaned != filename:
+        file_path = "%s/%s" % (path, filename)
+        cleaned_path = "%s/%s" % (path, cleaned)
+        os.rename(file_path, cleaned_path)
 
 # returns (key,count)
 def count_ones(element):
@@ -37,12 +49,12 @@ def run(argv=None):
   parser = argparse.ArgumentParser()
   parser.add_argument('--input',
                       dest='input',
-                      default='%s/raw/user-events.log' % get_data_path(),
+                      default='%s/user-events.log' % get_data_path('/raw'),
                       help='Input file to process.')
   parser.add_argument('--output',
                       dest='output',
                       # required=True,
-                      default='%s/processed' % get_data_path(),
+                      default='%s' % get_data_path('/processed'),
                       help='Output file to write results to.')
   known_args, pipeline_args = parser.parse_known_args(argv)
 
@@ -99,4 +111,5 @@ if __name__ == '__main__':
   logging.getLogger().setLevel(logging.INFO)
   while True:
     run()
+    clean_output_file_names()
     time.sleep(60)
