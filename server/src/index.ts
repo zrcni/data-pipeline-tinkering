@@ -41,7 +41,7 @@ function addListeners(socket: Socket) {
     const enrichedEvent = enrichEvent(event, socket)
     console.log("Event:", enrichedEvent)
 
-    eventLog.add(event)
+    eventLog.add(enrichedEvent)
   })
 }
 
