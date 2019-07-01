@@ -2,5 +2,10 @@ node_modules
 .env*
 server/data/*
 gcp-creds.json
-data/*
-beam/beam
+data/raw*
+beam-go/beam
+beam-python/bin*
+beam-python/include*
+beam-python/lib*
+beam-python/local*
+core_notes.txt

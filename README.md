@@ -54,5 +54,3 @@ I did however try to get stream processing to work with Google PubSub, but from 
 ![dataflow](data-pipeline.png)
 
 ### Google Pub/Sub + Dataflow + BigQuery would probably be a great option that's easy to manage
-
-# TODO: save processed data LOL

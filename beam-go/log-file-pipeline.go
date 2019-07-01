@@ -89,7 +89,7 @@ func extractFn(ctx context.Context, e Event, emit func(string)) {
 func readLatestEvents() ([]Event, error) {
 	// execPath, _ := os.Executable()
 	// dir, _ := filepath.Split(execPath)
-	files, err := ioutil.ReadDir("/home/smappa/code/tinker/frontend-user-events/data")
+	files, err := ioutil.ReadDir("/home/smappa/code/tinker/data-pipeline-tinkering/data/raw")
 	if err != nil {
 		return []Event{}, nil
 	}
@@ -103,7 +103,7 @@ func readLatestEvents() ([]Event, error) {
 		previousFile.ResetLineNumber()
 		previousFile.Name = lastFile.Name()
 	}
-	file, err := os.Open(filepath.Join("/home/smappa/code/tinker/frontend-user-events/data", lastFile.Name()))
+	file, err := os.Open(filepath.Join("/home/smappa/code/tinker/data-pipeline-tinkering/data/raw", lastFile.Name()))
 	if err != nil {
 		return []Event{}, err
 	}

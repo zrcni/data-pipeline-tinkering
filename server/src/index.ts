@@ -5,7 +5,7 @@ import { EventLog } from "./lib/EventLog"
 import cors from "cors"
 import bodyParser from "body-parser"
 
-const eventLogPath = "/data"
+const eventLogPath = "/data/raw"
 const eventLog = new EventLog(eventLogPath)
 
 const app = express()
