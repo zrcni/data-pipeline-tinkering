@@ -39,8 +39,7 @@ sio.on("connection", socket => {
 function addListeners(socket: Socket) {
   socket.on("user-event", event => {
     const enrichedEvent = enrichEvent(event, socket)
-    console.log("Name:", enrichedEvent.name)
-    console.log("Data:", enrichedEvent.data)
+    console.log("Event:", enrichedEvent)
 
     eventLog.add(event)
   })
@@ -50,10 +49,7 @@ function enrichEvent(event, socket: Socket) {
   const ip =
     socket.handshake["x-real-ip"] || socket.handshake.headers["x-forwarded-for"]
   return {
-    name: event.name,
-    data: {
-      ...event.data,
-      ip
-    }
+    ...event,
+    ip
   }
 }

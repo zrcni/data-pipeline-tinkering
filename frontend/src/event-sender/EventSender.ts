@@ -17,8 +17,8 @@ export class EventSender {
       ...elementData
     }
 
-    const name = `frontend:${args.view}:form:abort`
-    this.emitUserEvent(name, extraData)
+    const eventName = `frontend:${args.view}:form:abort`
+    this.emitUserEvent(eventName, extraData)
   }
 
   submitForm(args: BaseArgs & ElementArgs) {
@@ -30,8 +30,8 @@ export class EventSender {
       ...elementData
     }
 
-    const name = `frontend:${args.view}:form:submit`
-    this.emitUserEvent(name, extraData)
+    const eventName = `frontend:${args.view}:form:submit`
+    this.emitUserEvent(eventName, extraData)
   }
 
   click(args: BaseArgs & ElementArgs) {
@@ -43,18 +43,17 @@ export class EventSender {
       ...elementData
     }
 
-    const name = `frontend:${args.view}:button:click`
-    this.emitUserEvent(name, extraData)
+    const eventName = `frontend:${args.view}:button:click`
+    this.emitUserEvent(eventName, extraData)
   }
 
-  private emitUserEvent(name: string, extraData: Record<string, any>) {
+  private emitUserEvent(eventName: string, extraData: Record<string, any>) {
     const event = {
-      name,
-      data: {
-        ...extraData,
-        userId: this.userId,
-        timestamp: new Date().toISOString()
-      }
+      eventName,
+      ...extraData,
+      userId: this.userId,
+      eventInitiator: 'frontend:user',
+      timestamp: new Date().toISOString()
     }
     this.client.emit("user-event", event)
   }
@@ -80,14 +79,15 @@ interface ElementArgs {
   element: HTMLElement
 }
 
-interface RequiredEventData {
+export interface BaseEvent {
+  eventName: string
   userId: string
+  // From client or server?
+  // Triggered by user or app?
+  // (client/server):(user/app)
+  eventInitiator: string
+  details?: string
   timestamp: string
-}
-
-interface BaseEvent {
-  name: string
-  data: RequiredEventData
 }
 
 export interface EventSenderClient {

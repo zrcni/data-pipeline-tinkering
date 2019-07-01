@@ -1,9 +1,9 @@
 import React, { useState, useEffect, Fragment } from 'react'
 import { RouteComponentProps } from '@reach/router';
+import { BaseEvent } from '../event-sender/EventSender';
 
-interface Event {
-  name: string
-  data: { [key: string]: any }
+interface Event extends BaseEvent {
+  [key: string]: any
 }
 
 interface Props extends RouteComponentProps { }
@@ -55,14 +55,14 @@ const Events = (props: Props) => {
         </thead>
         <tbody>
           {filteredEvents
-            .sort((a, b) => new Date(a.data.timestamp) > new Date(b.data.timestamp) ? -1 : 0)
+            .sort((a, b) => new Date(a.timestamp) > new Date(b.timestamp) ? -1 : 0)
             .map(event => (
-              <tr key={event.name + event.data.timestamp}>
+              <tr key={event.eventName + event.timestamp}>
                 <td>{getEventType(event)}</td>
-                <td>{event.name}</td>
-                <td>{event.data.timestamp}</td>
-                <td>{event.data.elementId || "None"}</td>
-                <td>{event.data.dataTestid || "None"}</td>
+                <td>{event.eventName}</td>
+                <td>{event.timestamp}</td>
+                <td>{event.elementId || "None"}</td>
+                <td>{event.dataTestid || "None"}</td>
               </tr>
             ))}
         </tbody>
@@ -73,9 +73,9 @@ const Events = (props: Props) => {
 
 function filterBy(filter: string) {
   return (event: Event) => {
-    const rNavigate = new RegExp('.*:.*:.*:click').test(event.name) && !!event.data.navigateTo
-    const rFormAbort = new RegExp('.*:.*:form:abort').test(event.name)
-    const rFormSubmit = new RegExp('.*:.*:form:submit').test(event.name)
+    const rNavigate = new RegExp('.*:.*:.*:click').test(event.eventName) && !!event.navigateTo
+    const rFormAbort = new RegExp('.*:.*:form:abort').test(event.eventName)
+    const rFormSubmit = new RegExp('.*:.*:form:submit').test(event.eventName)
 
     switch (filter) {
       case FILTERS.FORM_SUBMIT:
@@ -88,7 +88,7 @@ function filterBy(filter: string) {
         return !rNavigate
           && !rFormAbort
           && !rFormSubmit
-          && new RegExp('.*:.*:button:click').test(event.name)
+          && new RegExp('.*:.*:button:click').test(event.eventName)
       default:
         return true
     }
@@ -97,13 +97,13 @@ function filterBy(filter: string) {
 
 function getEventType(event: Event) {
   switch (true) {
-    case !!event.data.navigateTo:
+    case !!event.navigateTo:
       return 'Navigation'
-    case new RegExp('.*:.*:form:submit').test(event.name):
+    case new RegExp('.*:.*:form:submit').test(event.eventName):
       return 'Form submit'
-    case new RegExp('.*:.*:form:abort').test(event.name):
+    case new RegExp('.*:.*:form:abort').test(event.eventName):
       return 'Form abort'
-    case new RegExp('.*:.*:button:click').test(event.name):
+    case new RegExp('.*:.*:button:click').test(event.eventName):
       return 'Button click'
     default:
       return 'Unknown'

@@ -55,7 +55,7 @@ func runLogFilePipeline() error {
 
 	// Groups events by userId
 	keyedUserIDs := beam.ParDo(s, func(e Event) (string, Event) {
-		userID := e.Data["userId"].(string)
+		userID := e["userId"].(string)
 		return userID, e
 	}, events)
 	eventsByUserID := beam.GroupByKey(s, keyedUserIDs)
@@ -69,20 +69,20 @@ func runLogFilePipeline() error {
 
 func printEventByViewFn(view string) func(ctx context.Context, event Event) {
 	return func(ctx context.Context, event Event) {
-		log.Infof(ctx, "View %s: %s", view, event.Name)
+		log.Infof(ctx, "View %s: %s", view, event["eventName"].(string))
 	}
 }
 
 func filterEventByView(view string) func(Event) bool {
 	return func(e Event) bool {
 		pattern := fmt.Sprintf(".*:%s:.*:.*", view)
-		match, _ := regexp.MatchString(pattern, e.Name)
+		match, _ := regexp.MatchString(pattern, e["eventName"].(string))
 		return match
 	}
 }
 
 func extractFn(ctx context.Context, e Event, emit func(string)) {
-	view := e.Data["view"].(string)
+	view := e["view"].(string)
 	emit(view)
 }
 

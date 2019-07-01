@@ -50,5 +50,5 @@ func deserializeEvent(ctx context.Context, message []byte) Event {
 }
 
 func toEventName(ctx context.Context, event Event) string {
-	return event.Name
+	return event["eventName"].(string)
 }

@@ -8,10 +8,7 @@ import (
 	"github.com/apache/beam/sdks/go/pkg/beam"
 )
 
-type Event struct {
-	Name string                 `json:"name"`
-	Data map[string]interface{} `json:"data"`
-}
+type Event map[string]interface{}
 
 func main() {
 	flag.Parse()

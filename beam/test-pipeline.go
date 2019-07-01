@@ -15,9 +15,9 @@ func runTestPipeline() {
 	ctx := context.Background()
 
 	data := []Event{
-		{Name: "frontend:home:button:click", Data: map[string]interface{}{"view": "home", "navigateTo": "contact", "dataTestid": "link-to-contact", "userId": "12345", "timestamp": "2019-06-29T20:52:35.169Z", "ip": "192.168.64.1"}},
-		{Name: "frontend:contact:button:click", Data: map[string]interface{}{"view": "contact", "navigateTo": "home", "dataTestid": "link-to-home", "userId": "12345", "timestamp": "2019-06-29T20:52:36.305Z", "ip": "192.168.64.1"}},
-		{Name: "frontend:home:button:click", Data: map[string]interface{}{"view": "home", "navigateTo": "contact", "dataTestid": "link-to-contact", "userId": "12345", "timestamp": "2019-06-29T20:52:36.776Z", "ip": "192.168.64.1"}},
+		map[string]interface{}{"eventName": "frontend:home:button:click", "view": "home", "navigateTo": "contact", "dataTestid": "link-to-contact", "userId": "12345", "timestamp": "2019-06-29T20:52:35.169Z", "ip": "192.168.64.1"},
+		map[string]interface{}{"eventName": "frontend:contact:button:click", "view": "contact", "navigateTo": "home", "dataTestid": "link-to-home", "userId": "12345", "timestamp": "2019-06-29T20:52:36.305Z", "ip": "192.168.64.1"},
+		map[string]interface{}{"eventName": "frontend:home:button:click", "view": "home", "navigateTo": "contact", "dataTestid": "link-to-contact", "userId": "12345", "timestamp": "2019-06-29T20:52:36.776Z", "ip": "192.168.64.1"},
 	}
 
 	log.Info(ctx, "Running")
@@ -43,7 +43,7 @@ func runTestPipeline() {
 
 	// Groups events by userId
 	keyedUserIDs := beam.ParDo(s, func(e Event) (string, Event) {
-		userID := e.Data["userId"].(string)
+		userID := e["userId"].(string)
 		return userID, e
 	}, events)
 	eventsByUserID := beam.GroupByKey(s, keyedUserIDs)
@@ -56,19 +56,19 @@ func runTestPipeline() {
 
 // func printEventByViewFn(view string) func(ctx context.Context, event Event) {
 // 	return func(ctx context.Context, event Event) {
-// 		log.Infof(ctx, "View %s: %s", view, event.Name)
+// 		log.Infof(ctx, "View %s: %s", view, event["eventName"].(string))
 // 	}
 // }
 
 // func filterEventByView(view string) func(Event) bool {
 // 	return func(e Event) bool {
 // 		pattern := fmt.Sprintf(".*:%s:.*:.*", view)
-// 		match, _ := regexp.MatchString(pattern, e.Name)
+// 		match, _ := regexp.MatchString(pattern, e["eventName"].(string))
 // 		return match
 // 	}
 // }
 
 // func extractFn(ctx context.Context, e Event, emit func(string)) {
-// 	view := e.Data["view"].(string)
+// 	view := e["view"].(string)
 // 	emit(view)
 // }
