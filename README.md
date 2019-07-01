@@ -26,6 +26,19 @@ I've had this topic on my mind, but I had just to try some stuff out after seein
 | timestamp       | timestamp                      
 | event details   | event details                  
 
+### Sample event from the app
+```json
+{
+  "eventName": "frontend:home:button:click",
+  "view": "home",
+  "dataTestid": "do-a-thing-button",
+  "userId": "12345",
+  "eventInitiator": "frontend:user",
+  "timestamp": "2019-07-01T04:22:22.052Z",
+  "ip": "192.168.64.1"
+}
+```
+
 Basically:
 
 1. User clicks a button, submits a form, navigates to another view, as generic examples
